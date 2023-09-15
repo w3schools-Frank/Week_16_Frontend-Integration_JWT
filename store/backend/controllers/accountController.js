@@ -34,7 +34,7 @@ exports.login = async (req, res) => {
     });
 
     if (!user) {
-        res.status(403).send("User not found. Please check your username and password");
+        res.status(403).send("User not found. Please check your username");
         return;
     }
 
@@ -47,14 +47,22 @@ exports.login = async (req, res) => {
         }
 
         console.log(result);
-        const payload = {
-            email: req.body.email
+
+        //result => true or false
+        if (result) {
+            const payload = {
+                email: req.body.email
+            }
+    
+            const secret = "PrivateKey123"
+    
+            const token = jwt.sign(payload, secret, { expiresIn: "30s" });
+    
+            res.json(token);
+        } else {
+            res.status(403).send("Incorrect password");
         }
 
-        const secret = "PrivateKey123"
 
-        const token = jwt.sign(payload, secret, { expiresIn: "30s" });
-
-        res.json(token);
     })
 }
